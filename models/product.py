@@ -1,8 +1,12 @@
 from sqlmodel import Field, SQLModel
 from typing import Optional
+from datetime import datetime
 
 class Product(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
-    secret_name: str
-    age: Optional[int] = None
+    description: str
+    designation: str
+    company: str
+    price: float
+    created_at: Optional[datetime] = Field(default=datetime.utcnow(), nullable=False)
+    last_edited: Optional[datetime] = Field(default_factory=datetime.utcnow(), nullable=False)
