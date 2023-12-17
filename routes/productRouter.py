@@ -8,7 +8,7 @@ router = APIRouter(prefix='/products', tags=['PRODUCTS'])
 
 @router.post("/", response_model=ProductRead, summary="Create a product")
 def createProduct(*, session: Session = Depends(get_session), product: ProductCreate):
-    db_product = Product.validate(product)
+    db_product = Product.model_dump(product)
     session.add(db_product)
     session.commit()
     session.refresh(db_product)
@@ -35,4 +35,17 @@ def deleteProductByID(*, session: Session = Depends(get_session), product_id: in
     session.commit()
     return {"ok": True}
 
+@router.patch("/{product_id}", response_model=ProductRead)
+def update_hero(product_id: int, product: ProductUpdate):
+    with Session(engine) as session:
+        db_product = session.get(Product, product_id)
+        if not db_product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        product_data = product.model_dump(exclude_unset=True)
+        for key, value in product_data.items():
+            setattr(db_product, key, value)
+        session.add(db_product)
+        session.commit()
+        session.refresh(db_product)
+        return db_product
 

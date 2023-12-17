@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Column
 from typing import Optional
 from datetime import datetime
 
@@ -9,8 +9,8 @@ class Product(SQLModel, table=True):
     designation: str
     company: str
     price: float
-    created_at: Optional[datetime] = Field(default=datetime.utcnow(), nullable=False)
-    last_edited: Optional[datetime] = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    updated_at: Optional[datetime] = Field(sa_column=Column(onupdate=datetime.utcnow))
 
 class ProductCreate(SQLModel):
     sku: str
@@ -27,4 +27,11 @@ class ProductRead(SQLModel):
     company: str
     price: float
     created_at: datetime
-    last_edited: datetime
+    updated_at: Optional[datetime]
+
+
+class ProductUpdate(SQLModel):
+    description: Optional[str]
+    designation: Optional[str]
+    company: Optional[str]
+    price: Optional[float]

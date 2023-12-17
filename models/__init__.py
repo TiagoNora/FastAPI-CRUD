@@ -1,1 +1,1 @@
-from .product import Product, ProductCreate, ProductRead
+from .product import *
