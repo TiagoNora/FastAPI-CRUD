@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from models import *
 from database import *
@@ -15,8 +15,8 @@ def createProduct(*, session: Session = Depends(get_session), product: ProductCr
     return db_product
 
 @router.get("/", response_model=List[ProductRead], summary="Get all products")
-def getProducts(*, session: Session = Depends(get_session)):
-    products = session.exec(select(Product)).all()
+def getProducts(*, session: Session = Depends(get_session), offset: int = 0, limit: int = Query(default=100, le=100)):
+    products = session.exec(select(Product).offset(offset).limit(limit)).all()
     return products
 
 @router.get("/{product_id}", response_model=ProductRead, summary="Get product by id")
